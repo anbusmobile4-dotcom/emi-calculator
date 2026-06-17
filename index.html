@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EMI Calculator</title>
+<style>
+body{
+font-family:Arial,sans-serif;
+max-width:500px;
+margin:40px auto;
+padding:20px;
+}
+input,button{
+width:100%;
+padding:10px;
+margin:10px 0;
+}
+.result{
+margin-top:20px;
+font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<h1>EMI Calculator</h1>
+
+<input type="number" id="loan" placeholder="Loan Amount">
+
+<input type="number" id="rate" placeholder="Interest Rate (%)">
+
+<input type="number" id="years" placeholder="Loan Years">
+
+<button onclick="calculateEMI()">Calculate EMI</button>
+
+<div class="result" id="result"></div>
+
+<hr>
+
+<p><strong>Name:</strong> A Jayanthi</p>
+<p><strong>Email:</strong> anbusmobile4@gmail.com</p>
+
+<a href="https://digitalheroesco.com" target="_blank">
+<button>Built for Digital Heroes</button>
+</a>
+
+<script>
+function calculateEMI(){
+let P=parseFloat(document.getElementById('loan').value);
+let annualRate=parseFloat(document.getElementById('rate').value);
+let years=parseFloat(document.getElementById('years').value);
+
+let r=annualRate/12/100;
+let n=years*12;
+
+let emi=(P*r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
+
+let totalPayment=emi*n;
+let totalInterest=totalPayment-P;
+
+document.getElementById('result').innerHTML=
+"Monthly EMI: ₹"+emi.toFixed(2)+"<br>"+
+"Total Interest: ₹"+totalInterest.toFixed(2)+"<br>"+
+"Total Payment: ₹"+totalPayment.toFixed(2);
+}
+</script>
+
+</body>
+</html>

@@ -1,28 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>EMI Calculator</title>
+<title>Jayanthi EMI Calculator</title>
+
 <style>
 body{
 font-family:Arial,sans-serif;
 max-width:500px;
 margin:40px auto;
 padding:20px;
+background:#f4f7fc;
 }
+
+.container{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+h1{
+text-align:center;
+color:#2563eb;
+}
+
 input,button{
 width:100%;
-padding:10px;
+padding:12px;
 margin:10px 0;
+border-radius:8px;
+border:1px solid #ccc;
+box-sizing:border-box;
 }
+
+button{
+background:#2563eb;
+color:white;
+font-size:16px;
+font-weight:bold;
+border:none;
+cursor:pointer;
+}
+
 .result{
 margin-top:20px;
+padding:15px;
+background:#eef4ff;
+border-radius:8px;
 font-weight:bold;
 }
+
+.footer{
+margin-top:20px;
+text-align:center;
+}
 </style>
+
 </head>
+
 <body>
 
-<h1>jayanthi EMI Calculator</h1>
+<div class="container">
+
+<h1>Jayanthi EMI Calculator</h1>
 
 <input type="number" id="loan" placeholder="Loan Amount">
 
@@ -39,12 +79,17 @@ font-weight:bold;
 <p><strong>Name:</strong> A Jayanthi</p>
 <p><strong>Email:</strong> anbusmobile4@gmail.com</p>
 
+<div class="footer">
 <a href="https://digitalheroesco.com" target="_blank">
-<button>Built for Digital Heroes</button>
+<button>Built For Digital Heroes</button>
 </a>
+</div>
+
+</div>
 
 <script>
 function calculateEMI(){
+
 let P=parseFloat(document.getElementById('loan').value);
 let annualRate=parseFloat(document.getElementById('rate').value);
 let years=parseFloat(document.getElementById('years').value);
@@ -58,8 +103,8 @@ let totalPayment=emi*n;
 let totalInterest=totalPayment-P;
 
 document.getElementById('result').innerHTML=
-"Monthly EMI: ₹"+emi.toFixed(2)+"<br>"+
-"Total Interest: ₹"+totalInterest.toFixed(2)+"<br>"+
+"Monthly EMI: ₹"+emi.toFixed(2)+"<br><br>"+
+"Total Interest: ₹"+totalInterest.toFixed(2)+"<br><br>"+
 "Total Payment: ₹"+totalPayment.toFixed(2);
 }
 </script>

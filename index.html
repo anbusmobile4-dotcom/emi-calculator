@@ -1,68 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Jayanthi EMI Calculator</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jayanthi EMI Calculator Pro</title>
 
 <style>
+:root{
+  --bg:#f4f7fc;
+  --card:#fff;
+  --text:#222;
+  --primary:#2563eb;
+}
+
+.dark{
+  --bg:#121212;
+  --card:#1e1e1e;
+  --text:#fff;
+  --primary:#4f8cff;
+}
+
 body{
-font-family:Arial,sans-serif;
-max-width:500px;
-margin:40px auto;
-padding:20px;
-background:#f4f7fc;
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  transition:.3s;
 }
 
 .container{
-background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  max-width:500px;
+  margin:20px auto;
+  background:var(--card);
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+.logo{
+  display:block;
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  margin:auto;
+  object-fit:cover;
 }
 
 h1{
-text-align:center;
-color:#2563eb;
+  text-align:center;
+  color:var(--primary);
 }
 
-input,button{
-width:100%;
-padding:12px;
-margin:10px 0;
-border-radius:8px;
-border:1px solid #ccc;
-box-sizing:border-box;
+input,select,button{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
+  box-sizing:border-box;
 }
 
 button{
-background:#2563eb;
-color:white;
-font-size:16px;
-font-weight:bold;
-border:none;
-cursor:pointer;
+  background:var(--primary);
+  color:white;
+  border:none;
+  cursor:pointer;
+  font-weight:bold;
 }
 
 .result{
-margin-top:20px;
-padding:15px;
-background:#eef4ff;
-border-radius:8px;
-font-weight:bold;
+  margin-top:15px;
+  padding:15px;
+  border-radius:10px;
+  background:#e8f0ff;
+}
+
+.dark .result{
+  background:#2d2d2d;
+}
+
+.history{
+  margin-top:20px;
+  font-size:14px;
 }
 
 .footer{
-margin-top:20px;
-text-align:center;
+  text-align:center;
+  margin-top:20px;
+}
+
+@media(max-width:600px){
+  .container{
+    margin:10px;
+  }
 }
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
 
+<img class="logo" src="https://via.placeholder.com/100" alt="Logo">
+
 <h1>Jayanthi EMI Calculator</h1>
+
+<button onclick="toggleDarkMode()">🌙 Dark Mode</button>
+
+<select id="currency">
+<option value="₹">₹ INR</option>
+<option value="$">$ USD</option>
+<option value="€">€ EUR</option>
+</select>
 
 <input type="number" id="loan" placeholder="Loan Amount">
 
@@ -72,12 +121,19 @@ text-align:center;
 
 <button onclick="calculateEMI()">Calculate EMI</button>
 
+<button onclick="downloadPDF()">📄 Download PDF</button>
+
 <div class="result" id="result"></div>
+
+<div class="history">
+<h3>💾 Calculation History</h3>
+<ul id="historyList"></ul>
+</div>
 
 <hr>
 
-<p><strong>Name:</strong> A Jayanthi</p>
-<p><strong>Email:</strong> anbusmobile4@gmail.com</p>
+<p><b>Name:</b> A Jayanthi</p>
+<p><b>Email:</b> anbusmobile4@gmail.com</p>
 
 <div class="footer">
 <a href="https://digitalheroesco.com" target="_blank">
@@ -88,25 +144,82 @@ text-align:center;
 </div>
 
 <script>
+
+loadHistory();
+
 function calculateEMI(){
 
-let P=parseFloat(document.getElementById('loan').value);
-let annualRate=parseFloat(document.getElementById('rate').value);
-let years=parseFloat(document.getElementById('years').value);
+let P=parseFloat(document.getElementById("loan").value);
+let annualRate=parseFloat(document.getElementById("rate").value);
+let years=parseFloat(document.getElementById("years").value);
 
 let r=annualRate/12/100;
 let n=years*12;
 
-let emi=(P*r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
+let emi=(P*r*Math.pow(1+r,n))/
+(Math.pow(1+r,n)-1);
 
 let totalPayment=emi*n;
 let totalInterest=totalPayment-P;
 
-document.getElementById('result').innerHTML=
-"Monthly EMI: ₹"+emi.toFixed(2)+"<br><br>"+
-"Total Interest: ₹"+totalInterest.toFixed(2)+"<br><br>"+
-"Total Payment: ₹"+totalPayment.toFixed(2);
+let cur=document.getElementById("currency").value;
+
+document.getElementById("result").innerHTML=
+`
+<b>Monthly EMI:</b> ${cur}${emi.toFixed(2)}<br>
+<b>Total Interest:</b> ${cur}${totalInterest.toFixed(2)}<br>
+<b>Total Payment:</b> ${cur}${totalPayment.toFixed(2)}
+`;
+
+saveHistory(cur,emi);
 }
+
+function toggleDarkMode(){
+document.body.classList.toggle("dark");
+}
+
+function saveHistory(cur,emi){
+
+let history=
+JSON.parse(localStorage.getItem("emiHistory"))||[];
+
+history.push(
+`${new Date().toLocaleString()} - ${cur}${emi.toFixed(2)}`
+);
+
+localStorage.setItem(
+"emiHistory",
+JSON.stringify(history)
+);
+
+loadHistory();
+}
+
+function loadHistory(){
+
+let history=
+JSON.parse(localStorage.getItem("emiHistory"))||[];
+
+let list=
+document.getElementById("historyList");
+
+if(!list) return;
+
+list.innerHTML="";
+
+history.reverse().forEach(item=>{
+let li=document.createElement("li");
+li.textContent=item;
+list.appendChild(li);
+});
+}
+
+function downloadPDF(){
+
+window.print();
+
+}
+
 </script>
 
 </body>
